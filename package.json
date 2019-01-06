@@ -5,17 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "webpack",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
   },
-  "author": "",
+  "author": "Jakub Podeszwik <jakubpodeszwik@gmail.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "pdfmake": "^0.1.40"
+  },
   "devDependencies": {
     "prettier": "^1.15.3",
+    "ts-loader": "^5.3.3",
     "tslint": "^5.12.0",
     "tslint-config-prettier": "^1.17.0",
-    "typescript": "^3.2.2"
+    "typescript": "^3.2.2",
+    "webpack": "^4.28.3"
   }
 }
