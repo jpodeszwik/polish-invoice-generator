@@ -167,6 +167,8 @@ declare module 'pdfmake/build/pdfmake' {
     table?: Table;
     ul?: Content[];
     ol?: Content[];
+    bold?: boolean;
+    layout?: TableLayoutFunctions;
 
     [additionalProperty: string]: any;
   }
