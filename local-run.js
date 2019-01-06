@@ -29,6 +29,20 @@ const invoiceData = {
     name: 'Receiver name',
     nip: '0987654321',
   },
+  items: [
+    {
+      description: 'Nazwa usługi',
+      amount: 1,
+      netPrice: 1650,
+      vatPercent: 23,
+    },
+    {
+      description: 'Nazwa usługi2',
+      amount: 1,
+      netPrice: 850,
+      vatPercent: 23,
+    },
+  ],
 };
 
 index.Hello(invoiceData).then(processResult);
