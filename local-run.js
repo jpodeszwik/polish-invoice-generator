@@ -38,11 +38,11 @@ const invoiceData = {
     },
     {
       description: 'Nazwa usługi2',
-      amount: 1,
+      amount: 2,
       netPrice: 850,
       vatPercent: 23,
     },
   ],
 };
 
-index.Hello(invoiceData).then(processResult);
+index.GenerateInvoice(invoiceData).then(processResult);

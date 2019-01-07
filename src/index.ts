@@ -1,4 +1,4 @@
-import { Content, TableCell } from 'pdfmake/build/pdfmake';
+import { Content, Table, TableLayoutFunctions, TDocumentDefinitions } from 'pdfmake/build/pdfmake';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -32,25 +32,54 @@ interface Invoice {
   items: InvoiceItem[];
 }
 
-const noBorderLayout: pdfMake.TableLayoutFunctions = {
+const noBorderLayout: TableLayoutFunctions = {
   hLineWidth: () => 0,
   vLineWidth: () => 0,
 };
 
-const buildItemsTable = (items: InvoiceItem[]): pdfMake.Table => {
-  const itemRows: Content[] = items.map((item, index) => {
-    const vat = (item.netPrice * item.vatPercent) / 100;
+const netValue = (item: InvoiceItem) => item.netPrice * item.amount;
+const vatValue = (item: InvoiceItem) => (netValue(item) * item.vatPercent) / 100;
+const grossValue = (item: InvoiceItem) => netValue(item) + vatValue(item);
+
+const summaryValues = (items: InvoiceItem[]) => {
+  return items
+    .map(item => ({ netValue: netValue(item), vatValue: vatValue(item), grossValue: grossValue(item) }))
+    .reduce(
+      (l, r) => ({
+        grossValue: l.grossValue + r.grossValue,
+        netValue: l.netValue + r.netValue,
+        vatValue: l.vatValue + r.vatValue,
+      }),
+      { netValue: 0, vatValue: 0, grossValue: 0 },
+    );
+};
+
+const buildItemsTable = (items: InvoiceItem[]): Table => {
+  const itemRows: Content[][] = items.map((item, index) => {
     return [
       { text: `${index + 1}` },
       { text: item.description },
       { text: `${item.amount} szt` },
       { text: `${item.netPrice}` },
-      { text: `${item.netPrice * item.amount}` },
+      { text: `${netValue(item)}` },
       { text: `${item.vatPercent}` },
-      { text: `${vat}` },
-      { text: `${item.netPrice + vat}` },
+      { text: `${vatValue(item)}` },
+      { text: `${grossValue(item)}` },
     ];
   });
+
+  const summary = summaryValues(items);
+
+  const summaryRow: Content[] = [
+    {},
+    {},
+    {},
+    { text: 'Razem', bold: true },
+    { text: `${summary.netValue}` },
+    {},
+    { text: `${summary.vatValue}` },
+    { text: `${summary.grossValue}` },
+  ];
 
   const headerRow: Content[] = [
     { text: 'LP' },
@@ -64,15 +93,15 @@ const buildItemsTable = (items: InvoiceItem[]): pdfMake.Table => {
   ];
 
   return {
-    body: [headerRow].concat(itemRows),
+    body: [headerRow, ...itemRows, summaryRow],
     widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   };
 };
 
-const buildDocumentDefinition = (invoice: Invoice): pdfMake.TDocumentDefinitions => {
+const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
   const { invoiceNumber, date, place, paymentDue, issuer, receiver, items } = invoice;
 
-  const table: pdfMake.Table = {
+  const table: Table = {
     body: [
       [{ text: 'Sprzedawca', bold: true }, { text: 'Nabywca', bold: true }],
       [{ text: issuer.name }, { text: receiver.name }],
@@ -80,7 +109,7 @@ const buildDocumentDefinition = (invoice: Invoice): pdfMake.TDocumentDefinitions
       [{ text: `NIP ${issuer.nip}` }, { text: `NIP: ${receiver.nip}` }],
       [{ text: issuer.account.join('\n') }, {}],
     ],
-    widths: [250, 250],
+    widths: ['auto', 'auto'],
   };
 
   return {
@@ -96,7 +125,7 @@ const buildDocumentDefinition = (invoice: Invoice): pdfMake.TDocumentDefinitions
   };
 };
 
-export const Hello = (invoice: Invoice): Promise<string> => {
+export const GenerateInvoice = (invoice: Invoice): Promise<string> => {
   return new Promise<string>(resolve => {
     const documentDefinition = buildDocumentDefinition(invoice);
     const pdfFile = pdf.createPdf(documentDefinition);
