@@ -1,94 +1,46 @@
 import { Content, Table, TableLayoutFunctions, TDocumentDefinitions } from 'pdfmake/build/pdfmake';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { calculateInvoiceValues } from './invoiceCalculator';
 
 const pdf = pdfMake;
 pdf.vfs = pdfFonts.pdfMake.vfs;
-
-interface Institution {
-  name: string;
-  address: string[];
-  nip: string;
-}
-
-interface Issuer extends Institution {
-  account: string[];
-}
-
-interface InvoiceItem {
-  description: string;
-  amount: number;
-  netPrice: number;
-  vatPercent: number;
-}
-
-interface Invoice {
-  invoiceNumber: string;
-  date: string;
-  place: string;
-  paymentDue: string;
-  issuer: Issuer;
-  receiver: Institution;
-  items: InvoiceItem[];
-}
 
 const noBorderLayout: TableLayoutFunctions = {
   hLineWidth: () => 0,
   vLineWidth: () => 0,
 };
 
-const netValue = (item: InvoiceItem) => item.netPrice * item.amount;
-const vatValue = (item: InvoiceItem) => (netValue(item) * item.vatPercent) / 100;
-const grossValue = (item: InvoiceItem) => netValue(item) + vatValue(item);
-
-const summaryValues = (items: InvoiceItem[]) => {
-  return items
-    .map(item => ({ netValue: netValue(item), vatValue: vatValue(item), grossValue: grossValue(item) }))
-    .reduce(
-      (l, r) => ({
-        grossValue: l.grossValue + r.grossValue,
-        netValue: l.netValue + r.netValue,
-        vatValue: l.vatValue + r.vatValue,
-      }),
-      { netValue: 0, vatValue: 0, grossValue: 0 },
-    );
-};
-
 const buildItemsTable = (items: InvoiceItem[]): Table => {
-  const itemRows: Content[][] = items.map((item, index) => {
+  const invoiceSummary = calculateInvoiceValues(items);
+
+  const itemRows: Content[][] = invoiceSummary.items.map((item, index) => {
     return [
       { text: `${index + 1}` },
       { text: item.description },
       { text: `${item.amount} szt` },
       { text: `${item.netPrice}` },
-      { text: `${netValue(item)}` },
+      { text: `${item.netValue}` },
       { text: `${item.vatPercent}` },
-      { text: `${vatValue(item)}` },
-      { text: `${grossValue(item)}` },
+      { text: `${item.vatValue}` },
+      { text: `${item.grossValue}` },
     ];
   });
 
-  const distinctVatRates = [...new Set(items.map(item => item.vatPercent))];
-
-  const summaryForRates = distinctVatRates.map(rate => {
-    const itemsForRate = items.filter(item => item.vatPercent === rate);
-    return { rate, ...summaryValues(itemsForRate) };
-  });
-
-  const summaryPerRateRows: Content[][] = summaryForRates.map((summary, index) => {
+  const summaryPerRateRows: Content[][] = invoiceSummary.vatRateValues.map((summary, index) => {
     return [
       {},
       {},
       {},
       { text: index === 0 ? 'W tym' : '' },
       { text: `${summary.netValue}` },
-      { text: `${summary.rate}` },
+      { text: `${summary.vatRate}` },
       { text: `${summary.vatValue}` },
       { text: `${summary.grossValue}` },
     ];
   });
 
-  const totalSummary = summaryValues(items);
+  const totalSummary = invoiceSummary.summary;
 
   const summaryRow: Content[] = [
     {},
