@@ -68,17 +68,37 @@ const buildItemsTable = (items: InvoiceItem[]): Table => {
     ];
   });
 
-  const summary = summaryValues(items);
+  const distinctVatRates = [...new Set(items.map(item => item.vatPercent))];
+
+  const summaryForRates = distinctVatRates.map(rate => {
+    const itemsForRate = items.filter(item => item.vatPercent === rate);
+    return { rate, ...summaryValues(itemsForRate) };
+  });
+
+  const summaryPerRateRows: Content[][] = summaryForRates.map((summary, index) => {
+    return [
+      {},
+      {},
+      {},
+      { text: index === 0 ? 'W tym' : '' },
+      { text: `${summary.netValue}` },
+      { text: `${summary.rate}` },
+      { text: `${summary.vatValue}` },
+      { text: `${summary.grossValue}` },
+    ];
+  });
+
+  const totalSummary = summaryValues(items);
 
   const summaryRow: Content[] = [
     {},
     {},
     {},
     { text: 'Razem', bold: true },
-    { text: `${summary.netValue}` },
+    { text: `${totalSummary.netValue}` },
     {},
-    { text: `${summary.vatValue}` },
-    { text: `${summary.grossValue}` },
+    { text: `${totalSummary.vatValue}` },
+    { text: `${totalSummary.grossValue}` },
   ];
 
   const headerRow: Content[] = [
@@ -93,7 +113,7 @@ const buildItemsTable = (items: InvoiceItem[]): Table => {
   ];
 
   return {
-    body: [headerRow, ...itemRows, summaryRow],
+    body: [headerRow, ...itemRows, ...summaryPerRateRows, summaryRow],
     widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
   };
 };
