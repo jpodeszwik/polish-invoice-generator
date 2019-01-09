@@ -1,7 +1,8 @@
 import { Content, Table, TableLayoutFunctions, TDocumentDefinitions } from 'pdfmake/build/pdfmake';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import { calculateInvoiceValues } from './invoiceCalculator';
+import { Invoice, InvoiceItem } from './invoice';
+import { calculateInvoiceSummary } from './invoiceCalculator';
 
 const pdf = pdfMake;
 pdf.vfs = pdfFonts.pdfMake.vfs;
@@ -12,7 +13,7 @@ const noBorderLayout: TableLayoutFunctions = {
 };
 
 const buildItemsTable = (items: InvoiceItem[]): Table => {
-  const invoiceSummary = calculateInvoiceValues(items);
+  const invoiceSummary = calculateInvoiceSummary(items);
 
   const itemRows: Content[][] = invoiceSummary.items.map((item, index) => {
     return [

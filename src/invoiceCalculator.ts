@@ -1,4 +1,6 @@
 /* tslint:disable:interface-name */
+import { InvoiceItem } from "./invoice";
+
 const netValue = (item: InvoiceItem) => item.netPrice * item.amount;
 const vatValue = (item: InvoiceItem) => (netValue(item) * item.vatPercent) / 100;
 const grossValue = (item: InvoiceItem) => netValue(item) + vatValue(item);
@@ -44,7 +46,7 @@ const calculateVatRateSummary = (items: CalculatedItem[], vatRate: number): Rate
   vatRate,
 });
 
-export const calculateInvoiceValues = (items: InvoiceItem[]): InvoiceSummary => {
+export const calculateInvoiceSummary = (items: InvoiceItem[]): InvoiceSummary => {
   const valuedItems = items.map(calculateItemValues);
   const summary = calculateSummary(valuedItems);
   const distinctVatRates = [...new Set(items.map(item => item.vatPercent))];

@@ -1,21 +1,21 @@
-interface Institution {
+export interface Institution {
   name: string;
   address: string[];
   nip: string;
 }
 
-interface Issuer extends Institution {
+export interface Issuer extends Institution {
   account: string[];
 }
 
-interface InvoiceItem {
+export interface InvoiceItem {
   description: string;
   amount: number;
   netPrice: number;
   vatPercent: number;
 }
 
-interface Invoice {
+export interface Invoice {
   invoiceNumber: string;
   date: string;
   place: string;
