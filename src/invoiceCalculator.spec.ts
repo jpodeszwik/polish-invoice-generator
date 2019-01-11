@@ -9,8 +9,8 @@ describe('calculateInvoiceSummary function', () => {
 
     const result = calculateInvoiceSummary(items);
 
-    expect(result.items).to.be.empty;
-    expect(result.vatRateValues).to.be.empty;
+    expect(result.items).to.have.length(0);
+    expect(result.vatRateValues).to.have.length(0);
     expect(result.summary.grossValue).to.be.equal(0);
     expect(result.summary.netValue).to.be.equal(0);
     expect(result.summary.vatValue).to.be.equal(0);
@@ -39,5 +39,28 @@ describe('calculateInvoiceSummary function', () => {
     expect(summary.netValue).to.be.equal(30000);
     expect(summary.vatValue).to.be.equal(3000);
     expect(summary.grossValue).to.be.equal(33000);
+  });
+
+  it('should group values by vatPercent', () => {
+    const items: InvoiceItem[] = [
+      { description: 'description', amount: 1, vatPercent: 10, netPrice: 10000 },
+      { description: 'description', amount: 1, vatPercent: 20, netPrice: 10000 },
+      { description: 'description', amount: 1, vatPercent: 20, netPrice: 5000 },
+      { description: 'description', amount: 1, vatPercent: 10, netPrice: 5000 },
+    ];
+
+    const result = calculateInvoiceSummary(items);
+
+    const vatRate10 = result.vatRateValues.filter(item => item.vatRate === 10)[0];
+    expect(vatRate10.vatRate).to.be.equal(10);
+    expect(vatRate10.netValue).to.be.equal(15000);
+    expect(vatRate10.vatValue).to.be.equal(1500);
+    expect(vatRate10.grossValue).to.be.equal(16500);
+
+    const vatRate20 = result.vatRateValues.filter(item => item.vatRate === 20)[0];
+    expect(vatRate20.vatRate).to.be.equal(20);
+    expect(vatRate20.netValue).to.be.equal(15000);
+    expect(vatRate20.vatValue).to.be.equal(3000);
+    expect(vatRate20.grossValue).to.be.equal(18000);
   });
 });
