@@ -14,6 +14,21 @@ const noBorderLayout: TableLayoutFunctions = {
 
 const emptyCell: TableCell = { text: '', border: [false, false, false, false] };
 
+const horizontalLine = (): Content => {
+  return {
+    canvas: [
+      {
+        lineWidth: 2,
+        type: 'line',
+        x1: 0,
+        x2: 500,
+        y1: 5,
+        y2: 5,
+      },
+    ],
+  };
+};
+
 const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
   const itemRows: TableCell[][] = invoiceSummary.items.map((item, index) => {
     return [
@@ -106,10 +121,13 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       { text: [{ text: 'Miejsce wystawienia: ', bold: true }, { text: place }] },
       { text: [{ text: 'Termin płatności: ', bold: true }, { text: paymentDue }] },
       { text: [{ text: 'Płatność: ', bold: true }, { text: 'przelew' }] },
+      horizontalLine(),
       { table, layout: noBorderLayout },
       { table: buildItemsTable(invoiceSummary) },
       { table: buildSummaryTable(invoiceSummary.summary), layout: noBorderLayout },
+      horizontalLine(),
       { text: [{ text: 'Do zapłaty ', bold: true }, { text: `${invoiceSummary.summary.grossValue}` }] },
+      horizontalLine(),
       { text: 'Imię i nazwisko wystawcy:', bold: true },
       { text: `${invoice.createdBy}` },
     ],

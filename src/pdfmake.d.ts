@@ -122,6 +122,23 @@ declare module 'pdfmake/build/pdfmake' {
     [additionalProperty: string]: any;
   }
 
+  interface CanvasElement {
+    type: string;
+    x?: number;
+    y?: number;
+    x1?: number;
+    x2?: number;
+    y1?: number;
+    y2?: number;
+    w?: number;
+    h?: number;
+    r?: number;
+    lineColor?: string;
+    color?: string;
+    lineWidth?: number;
+    closePath?: boolean;
+  }
+
   type TableRowFunction = (row: number) => number;
 
   interface TableLayoutFunctions {
@@ -170,6 +187,7 @@ declare module 'pdfmake/build/pdfmake' {
     ol?: Content[];
     bold?: boolean;
     layout?: TableLayoutFunctions;
+    canvas?: CanvasElement[];
 
     [additionalProperty: string]: any;
   }
@@ -179,7 +197,7 @@ declare module 'pdfmake/build/pdfmake' {
     compress?: boolean;
     header?: TDocumentHeaderFooterFunction;
     footer?: TDocumentHeaderFooterFunction;
-    content: string | Content;
+    content: string | Content | Content[];
     styles?: Style;
     pageSize?: PageSize;
     pageOrientation?: PageOrientation;
