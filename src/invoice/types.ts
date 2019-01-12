@@ -23,4 +23,5 @@ export interface Invoice {
   issuer: Issuer;
   receiver: Institution;
   items: InvoiceItem[];
+  createdBy: string;
 }

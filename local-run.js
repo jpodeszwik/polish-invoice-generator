@@ -20,6 +20,7 @@ const processResult = result => {
 };
 
 const invoiceData = {
+  createdBy: 'John Doe',
   date: '2019-01-31',
   invoiceNumber: '1/2019',
   issuer: {

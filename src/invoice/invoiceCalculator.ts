@@ -5,7 +5,7 @@ const netValue = (item: InvoiceItem) => item.netPrice * item.amount;
 const vatValue = (item: InvoiceItem) => (netValue(item) * item.vatPercent) / 100;
 const grossValue = (item: InvoiceItem) => netValue(item) + vatValue(item);
 
-interface InvoiceValue {
+export interface InvoiceValue {
   grossValue: number;
   netValue: number;
   vatValue: number;
@@ -17,7 +17,7 @@ interface RateSummaryValue extends InvoiceValue {
   vatRate: number;
 }
 
-interface InvoiceSummary {
+export interface InvoiceSummary {
   items: CalculatedItem[];
   vatRateValues: RateSummaryValue[];
   summary: InvoiceValue;

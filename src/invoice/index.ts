@@ -1,8 +1,8 @@
 import { Content, Table, TableCell, TableLayoutFunctions, TDocumentDefinitions } from 'pdfmake/build/pdfmake';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import { calculateInvoiceSummary } from './invoiceCalculator';
-import { Invoice, InvoiceItem } from './types';
+import { calculateInvoiceSummary, InvoiceSummary, InvoiceValue } from './invoiceCalculator';
+import { Invoice } from './types';
 
 const pdf = pdfMake;
 pdf.vfs = pdfFonts.pdfMake.vfs;
@@ -14,9 +14,7 @@ const noBorderLayout: TableLayoutFunctions = {
 
 const emptyCell: TableCell = { text: '', border: [false, false, false, false] };
 
-const buildItemsTable = (items: InvoiceItem[]): Table => {
-  const invoiceSummary = calculateInvoiceSummary(items);
-
+const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
   const itemRows: TableCell[][] = invoiceSummary.items.map((item, index) => {
     return [
       { text: `${index + 1}` },
@@ -73,8 +71,22 @@ const buildItemsTable = (items: InvoiceItem[]): Table => {
   };
 };
 
+const buildSummaryTable = (invoiceSummary: InvoiceValue): Content => {
+  const body: TableCell[][] = [
+    [{ text: 'Wartość netto', bold: true }, { text: `${invoiceSummary.netValue}` }],
+    [{ text: 'Wartość VAT', bold: true }, { text: `${invoiceSummary.vatValue}` }],
+    [{ text: 'Wartość brutto', bold: true }, { text: `${invoiceSummary.grossValue}` }],
+  ];
+
+  return {
+    body,
+    widths: ['auto', 'auto'],
+  };
+};
+
 const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
   const { invoiceNumber, date, place, paymentDue, issuer, receiver, items } = invoice;
+  const invoiceSummary = calculateInvoiceSummary(items);
 
   const table: Table = {
     body: [
@@ -95,7 +107,11 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       { text: [{ text: 'Termin płatności: ', bold: true }, { text: paymentDue }] },
       { text: [{ text: 'Płatność: ', bold: true }, { text: 'przelew' }] },
       { table, layout: noBorderLayout },
-      { table: buildItemsTable(items) },
+      { table: buildItemsTable(invoiceSummary) },
+      { table: buildSummaryTable(invoiceSummary.summary), layout: noBorderLayout },
+      { text: [{ text: 'Do zapłaty ', bold: true }, { text: `${invoiceSummary.summary.grossValue}` }] },
+      { text: 'Imię i nazwisko wystawcy:', bold: true },
+      { text: `${invoice.createdBy}` },
     ],
   };
 };
