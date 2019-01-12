@@ -1,5 +1,5 @@
 /* tslint:disable:interface-name */
-import { InvoiceItem } from "./invoice";
+import { InvoiceItem } from './types';
 
 const netValue = (item: InvoiceItem) => item.netPrice * item.amount;
 const vatValue = (item: InvoiceItem) => (netValue(item) * item.vatPercent) / 100;

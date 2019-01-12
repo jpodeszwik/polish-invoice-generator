@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { InvoiceItem } from './invoice';
+import { InvoiceItem } from './types';
 import { calculateInvoiceSummary } from './invoiceCalculator';
 
 describe('calculateInvoiceSummary function', () => {

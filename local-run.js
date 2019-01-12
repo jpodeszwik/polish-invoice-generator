@@ -3,14 +3,20 @@ const index = require('./dist/index');
 const fs = require('fs');
 
 const processResult = result => {
-  const buffer = Buffer.from(result, 'base64');
-  fs.writeFile('../invoice.pdf', buffer, err => {
-    if (err === null) {
-      console.log('finished writing invoice.pdf file');
-    } else {
-      console.error(`error occured during writing file ${error}`);
-    }
-  });
+  const { statusCode, body } = result;
+
+  if (statusCode === 200) {
+    const buffer = Buffer.from(body, 'base64');
+    fs.writeFile('../invoice.pdf', buffer, err => {
+      if (err === null) {
+        console.log('finished writing invoice.pdf file');
+      } else {
+        console.error(`error occured during writing file ${error}`);
+      }
+    });
+  } else {
+    console.error(`statusCode: ${statusCode}, message: ${body}`);
+  }
 };
 
 const invoiceData = {
@@ -51,4 +57,8 @@ const invoiceData = {
   ],
 };
 
-index.GenerateInvoice(invoiceData).then(processResult);
+const event = {
+  body: JSON.stringify(invoiceData),
+};
+
+index.handler(event).then(processResult);
