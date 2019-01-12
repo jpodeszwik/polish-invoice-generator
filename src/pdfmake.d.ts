@@ -137,7 +137,7 @@ declare module 'pdfmake/build/pdfmake' {
   }
 
   interface TableCell {
-    text: string;
+    text?: string;
     rowSpan?: number;
     colSpan?: number;
     fillColor?: string;
