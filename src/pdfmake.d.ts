@@ -141,6 +141,7 @@ declare module 'pdfmake/build/pdfmake' {
     rowSpan?: number;
     colSpan?: number;
     fillColor?: string;
+    bold?: boolean;
     border?: [boolean, boolean, boolean, boolean];
   }
 

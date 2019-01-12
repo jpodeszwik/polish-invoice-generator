@@ -1,8 +1,8 @@
-import { Content, Table, TableLayoutFunctions, TDocumentDefinitions } from 'pdfmake/build/pdfmake';
+import { Content, Table, TableCell, TableLayoutFunctions, TDocumentDefinitions } from 'pdfmake/build/pdfmake';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import { Invoice, InvoiceItem } from './types';
 import { calculateInvoiceSummary } from './invoiceCalculator';
+import { Invoice, InvoiceItem } from './types';
 
 const pdf = pdfMake;
 pdf.vfs = pdfFonts.pdfMake.vfs;
@@ -12,10 +12,12 @@ const noBorderLayout: TableLayoutFunctions = {
   vLineWidth: () => 0,
 };
 
+const emptyCell: TableCell = { text: '', border: [false, false, false, false] };
+
 const buildItemsTable = (items: InvoiceItem[]): Table => {
   const invoiceSummary = calculateInvoiceSummary(items);
 
-  const itemRows: Content[][] = invoiceSummary.items.map((item, index) => {
+  const itemRows: TableCell[][] = invoiceSummary.items.map((item, index) => {
     return [
       { text: `${index + 1}` },
       { text: item.description },
@@ -28,12 +30,12 @@ const buildItemsTable = (items: InvoiceItem[]): Table => {
     ];
   });
 
-  const summaryPerRateRows: Content[][] = invoiceSummary.vatRateValues.map((summary, index) => {
+  const summaryPerRateRows: TableCell[][] = invoiceSummary.vatRateValues.map((summary, index) => {
     return [
-      {},
-      {},
-      {},
-      { text: index === 0 ? 'W tym' : '' },
+      emptyCell,
+      emptyCell,
+      emptyCell,
+      index === 0 ? { text: 'W tym' } : emptyCell,
       { text: `${summary.netValue}` },
       { text: `${summary.vatRate}` },
       { text: `${summary.vatValue}` },
@@ -43,10 +45,10 @@ const buildItemsTable = (items: InvoiceItem[]): Table => {
 
   const totalSummary = invoiceSummary.summary;
 
-  const summaryRow: Content[] = [
-    {},
-    {},
-    {},
+  const summaryRow: TableCell[] = [
+    emptyCell,
+    emptyCell,
+    emptyCell,
     { text: 'Razem', bold: true },
     { text: `${totalSummary.netValue}` },
     {},
