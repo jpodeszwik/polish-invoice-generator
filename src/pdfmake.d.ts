@@ -160,6 +160,7 @@ declare module 'pdfmake/build/pdfmake' {
     fillColor?: string;
     bold?: boolean;
     border?: [boolean, boolean, boolean, boolean];
+    alignment?: Alignment;
   }
 
   interface Table {

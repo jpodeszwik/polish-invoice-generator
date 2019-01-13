@@ -32,14 +32,14 @@ const horizontalLine = (): Content => {
 const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
   const itemRows: TableCell[][] = invoiceSummary.items.map((item, index) => {
     return [
-      { text: `${index + 1}` },
+      { text: `${index + 1}`, alignment: 'right' },
       { text: item.description },
-      { text: `${item.amount} szt` },
-      { text: `${item.netPrice}` },
-      { text: `${item.netValue}` },
-      { text: `${item.vatPercent}` },
-      { text: `${item.vatValue}` },
-      { text: `${item.grossValue}` },
+      { text: `${item.amount} szt`, alignment: 'right' },
+      { text: `${item.netPrice}`, alignment: 'right' },
+      { text: `${item.netValue}`, alignment: 'right' },
+      { text: `${item.vatPercent}`, alignment: 'right' },
+      { text: `${item.vatValue}`, alignment: 'right' },
+      { text: `${item.grossValue}`, alignment: 'right' },
     ];
   });
 
@@ -48,11 +48,11 @@ const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
       emptyCell,
       emptyCell,
       emptyCell,
-      index === 0 ? { text: 'W tym' } : emptyCell,
-      { text: `${summary.netValue}` },
-      { text: `${summary.vatRate}` },
-      { text: `${summary.vatValue}` },
-      { text: `${summary.grossValue}` },
+      index === 0 ? { text: 'W tym', alignment: 'right' } : emptyCell,
+      { text: `${summary.netValue}`, alignment: 'right' },
+      { text: `${summary.vatRate}`, alignment: 'right' },
+      { text: `${summary.vatValue}`, alignment: 'right' },
+      { text: `${summary.grossValue}`, alignment: 'right' },
     ];
   });
 
@@ -62,27 +62,27 @@ const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
     emptyCell,
     emptyCell,
     emptyCell,
-    { text: 'Razem', bold: true },
-    { text: `${totalSummary.netValue}` },
+    { text: 'Razem', bold: true, alignment: 'right' },
+    { text: `${totalSummary.netValue}`, alignment: 'right' },
     {},
-    { text: `${totalSummary.vatValue}` },
-    { text: `${totalSummary.grossValue}` },
+    { text: `${totalSummary.vatValue}`, alignment: 'right' },
+    { text: `${totalSummary.grossValue}`, alignment: 'right' },
   ];
 
   const headerRow: Content[] = [
-    { text: 'LP' },
-    { text: 'Nazwa towaru / usługi' },
-    { text: 'Ilość' },
-    { text: 'Cena netto' },
-    { text: 'Wartość netto' },
-    { text: 'VAT %' },
-    { text: 'Wartość VAT' },
-    { text: 'Wartość brutto' },
+    { text: 'LP', alignment: 'right' },
+    { text: 'Nazwa towaru / usługi', alignment: 'left' },
+    { text: 'Ilość', alignment: 'right' },
+    { text: 'Cena netto', alignment: 'right' },
+    { text: 'Wartość netto', alignment: 'right' },
+    { text: 'VAT %', alignment: 'right' },
+    { text: 'Wartość VAT', alignment: 'right' },
+    { text: 'Wartość brutto', alignment: 'right' },
   ];
 
   return {
     body: [headerRow, ...itemRows, ...summaryPerRateRows, summaryRow],
-    widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+    widths: ['3%', '39%', '5%', '12%', '12%', '5%', '12%', '12%'],
   };
 };
 
@@ -111,7 +111,7 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       [{ text: `NIP ${issuer.nip}` }, { text: `NIP: ${receiver.nip}` }],
       [{ text: issuer.account.join('\n') }, {}],
     ],
-    widths: ['auto', 'auto'],
+    widths: ['50%', '50%'],
   };
 
   return {
