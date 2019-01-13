@@ -131,6 +131,9 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       { text: 'Imię i nazwisko wystawcy:', bold: true },
       { text: `${invoice.createdBy}` },
     ],
+    defaultStyle: {
+      fontSize: 8,
+    },
   };
 };
 
