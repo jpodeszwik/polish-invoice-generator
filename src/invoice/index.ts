@@ -16,6 +16,7 @@ const noBorderLayout: TableLayoutFunctions = {
 const emptyCell: TableCell = { text: '', border: [false, false, false, false] };
 
 const formatCurrency = (amount: Big) => amount.round(2, RoundingMode.RoundHalfUp).toFixed(2);
+const formatPLN = (num: Big) => `${formatCurrency(num)} PLN`;
 
 const horizontalSpacer = (): Content => {
   return {
@@ -110,14 +111,32 @@ const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
 
 const buildSummaryTable = (invoiceSummary: InvoiceValue): Content => {
   const body: TableCell[][] = [
-    [{ text: 'Wartość netto', bold: true }, { text: formatCurrency(invoiceSummary.netValue) }],
-    [{ text: 'Wartość VAT', bold: true }, { text: formatCurrency(invoiceSummary.vatValue) }],
-    [{ text: 'Wartość brutto', bold: true }, { text: formatCurrency(invoiceSummary.grossValue) }],
+    [{ text: 'Wartość netto', bold: true }, { text: formatPLN(invoiceSummary.netValue), alignment: 'right' }],
+    [{ text: 'Wartość VAT', bold: true }, { text: formatPLN(invoiceSummary.vatValue), alignment: 'right' }],
+    [{ text: 'Wartość brutto', bold: true }, { text: formatPLN(invoiceSummary.grossValue), alignment: 'right' }],
   ];
 
   return {
     body,
     widths: ['auto', 'auto'],
+  };
+};
+
+const buildPaymentSection = (value: Big): Content => {
+  const body: TableCell[][] = [[{ text: 'Do zapłaty', bold: true }, { text: formatPLN(value) }]];
+  return {
+    layout: noBorderLayout,
+    table: {
+      body,
+      widths: ['10%', 'auto']
+    },
+  };
+};
+
+const buildCreatedBySection = (createdBy: string): Content => {
+  const body: TableCell[][] = [[{ text: 'Imię i nazwisko wystawcy:', bold: true }], [{ text: createdBy }]];
+  return {
+    columns: [{ width: '70%', text: '' }, { width: 'auto', table: { body }, layout: noBorderLayout }],
   };
 };
 
@@ -145,13 +164,14 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       { text: [{ text: 'Płatność: ', bold: true }, { text: 'przelew' }] },
       horizontalSpacer(),
       { table, layout: noBorderLayout },
+      horizontalSpacer(),
       { table: buildItemsTable(invoiceSummary) },
-      { table: buildSummaryTable(invoiceSummary.summary), layout: noBorderLayout },
       horizontalSpacer(),
-      { text: [{ text: 'Do zapłaty ', bold: true }, { text: formatCurrency(invoiceSummary.summary.grossValue) }] },
+      { columns: [{ width: '*', text: '' }, { width: 'auto', table: buildSummaryTable(invoiceSummary.summary), layout: noBorderLayout }] },
       horizontalSpacer(),
-      { text: 'Imię i nazwisko wystawcy:', bold: true },
-      { text: `${invoice.createdBy}` },
+      buildPaymentSection(invoiceSummary.summary.grossValue),
+      horizontalSpacer(),
+      buildCreatedBySection(invoice.createdBy),
     ],
     defaultStyle: {
       fontSize: 8,

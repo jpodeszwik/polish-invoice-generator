@@ -46,7 +46,7 @@ const invoiceData = {
     {
       description: 'Nazwa usługi2',
       amount: '2',
-      netPrice: '850',
+      netPrice: '8500',
       vatPercent: '23',
     },
     {
