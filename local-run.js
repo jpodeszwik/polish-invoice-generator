@@ -39,21 +39,21 @@ const invoiceData = {
   items: [
     {
       description: 'Nazwa usługi',
-      amount: 1,
-      netPrice: 1650,
-      vatPercent: 23,
+      amount: '1',
+      netPrice: '1650',
+      vatPercent: '23',
     },
     {
       description: 'Nazwa usługi2',
-      amount: 2,
-      netPrice: 850,
-      vatPercent: 23,
+      amount: '2',
+      netPrice: '850',
+      vatPercent: '23',
     },
     {
       description: 'Nazwa usługi3',
-      amount: 2,
-      netPrice: 750,
-      vatPercent: 8,
+      amount: '2',
+      netPrice: '750',
+      vatPercent: '8',
     },
   ],
 };

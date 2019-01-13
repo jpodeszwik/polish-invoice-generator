@@ -13,6 +13,8 @@
   "author": "Jakub Podeszwik <jakubpodeszwik@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/big.js": "^4.0.5",
+    "big.js": "^5.2.2",
     "pdfmake": "^0.1.40"
   },
   "devDependencies": {

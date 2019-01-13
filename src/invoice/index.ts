@@ -1,5 +1,6 @@
-import { Content, Table, TableCell, TableLayoutFunctions, TDocumentDefinitions } from 'pdfmake/build/pdfmake';
+import { Big, RoundingMode } from 'big.js';
 import * as pdfMake from 'pdfmake/build/pdfmake';
+import { Content, Table, TableCell, TableLayoutFunctions, TDocumentDefinitions } from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { calculateInvoiceSummary, InvoiceSummary, InvoiceValue } from './invoiceCalculator';
 import { Invoice } from './types';
@@ -13,6 +14,8 @@ const noBorderLayout: TableLayoutFunctions = {
 };
 
 const emptyCell: TableCell = { text: '', border: [false, false, false, false] };
+
+const formatCurrency = (amount: Big) => amount.round(2, RoundingMode.RoundHalfUp).toFixed(2);
 
 const horizontalSpacer = (): Content => {
   return {
@@ -54,11 +57,11 @@ const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
       { text: `${index + 1}`, alignment: 'right' },
       { text: item.description },
       { text: `${item.amount} szt`, alignment: 'right' },
-      { text: `${item.netPrice}`, alignment: 'right' },
-      { text: `${item.netValue}`, alignment: 'right' },
+      { text: formatCurrency(item.netPrice), alignment: 'right' },
+      { text: formatCurrency(item.netValue), alignment: 'right' },
       { text: `${item.vatPercent}`, alignment: 'right' },
-      { text: `${item.vatValue}`, alignment: 'right' },
-      { text: `${item.grossValue}`, alignment: 'right' },
+      { text: formatCurrency(item.vatValue), alignment: 'right' },
+      { text: formatCurrency(item.grossValue), alignment: 'right' },
     ];
   });
 
@@ -68,10 +71,10 @@ const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
       emptyCell,
       emptyCell,
       index === 0 ? { text: 'W tym', alignment: 'right' } : emptyCell,
-      { text: `${summary.netValue}`, alignment: 'right' },
+      { text: formatCurrency(summary.netValue), alignment: 'right' },
       { text: `${summary.vatRate}`, alignment: 'right' },
-      { text: `${summary.vatValue}`, alignment: 'right' },
-      { text: `${summary.grossValue}`, alignment: 'right' },
+      { text: formatCurrency(summary.vatValue), alignment: 'right' },
+      { text: formatCurrency(summary.grossValue), alignment: 'right' },
     ];
   });
 
@@ -82,10 +85,10 @@ const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
     emptyCell,
     emptyCell,
     { text: 'Razem', bold: true, alignment: 'right' },
-    { text: `${totalSummary.netValue}`, alignment: 'right' },
+    { text: formatCurrency(totalSummary.netValue), alignment: 'right' },
     {},
-    { text: `${totalSummary.vatValue}`, alignment: 'right' },
-    { text: `${totalSummary.grossValue}`, alignment: 'right' },
+    { text: formatCurrency(totalSummary.vatValue), alignment: 'right' },
+    { text: formatCurrency(totalSummary.grossValue), alignment: 'right' },
   ];
 
   const headerRow: Content[] = [
@@ -107,9 +110,9 @@ const buildItemsTable = (invoiceSummary: InvoiceSummary): Table => {
 
 const buildSummaryTable = (invoiceSummary: InvoiceValue): Content => {
   const body: TableCell[][] = [
-    [{ text: 'Wartość netto', bold: true }, { text: `${invoiceSummary.netValue}` }],
-    [{ text: 'Wartość VAT', bold: true }, { text: `${invoiceSummary.vatValue}` }],
-    [{ text: 'Wartość brutto', bold: true }, { text: `${invoiceSummary.grossValue}` }],
+    [{ text: 'Wartość netto', bold: true }, { text: formatCurrency(invoiceSummary.netValue) }],
+    [{ text: 'Wartość VAT', bold: true }, { text: formatCurrency(invoiceSummary.vatValue) }],
+    [{ text: 'Wartość brutto', bold: true }, { text: formatCurrency(invoiceSummary.grossValue) }],
   ];
 
   return {
@@ -145,7 +148,7 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       { table: buildItemsTable(invoiceSummary) },
       { table: buildSummaryTable(invoiceSummary.summary), layout: noBorderLayout },
       horizontalSpacer(),
-      { text: [{ text: 'Do zapłaty ', bold: true }, { text: `${invoiceSummary.summary.grossValue}` }] },
+      { text: [{ text: 'Do zapłaty ', bold: true }, { text: formatCurrency(invoiceSummary.summary.grossValue) }] },
       horizontalSpacer(),
       { text: 'Imię i nazwisko wystawcy:', bold: true },
       { text: `${invoice.createdBy}` },

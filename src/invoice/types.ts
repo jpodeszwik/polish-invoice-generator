@@ -10,9 +10,9 @@ export interface Issuer extends Institution {
 
 export interface InvoiceItem {
   description: string;
-  amount: number;
-  netPrice: number;
-  vatPercent: number;
+  amount: string;
+  netPrice: string;
+  vatPercent: string;
 }
 
 export interface Invoice {
