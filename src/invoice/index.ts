@@ -14,16 +14,35 @@ const noBorderLayout: TableLayoutFunctions = {
 
 const emptyCell: TableCell = { text: '', border: [false, false, false, false] };
 
-const horizontalLine = (): Content => {
+const horizontalSpacer = (): Content => {
   return {
     canvas: [
       {
-        lineWidth: 2,
+        lineColor: '#808080',
+        lineWidth: 1,
         type: 'line',
         x1: 0,
-        x2: 500,
+        x2: 515,
+        y1: 4,
+        y2: 4,
+      },
+      {
+        lineColor: '#cccccc',
+        lineWidth: 1,
+        type: 'line',
+        x1: 0,
+        x2: 515,
         y1: 5,
         y2: 5,
+      },
+      {
+        lineColor: '#ffffff',
+        lineWidth: 1,
+        type: 'line',
+        x1: 0,
+        x2: 515,
+        y1: 9,
+        y2: 9,
       },
     ],
   };
@@ -121,13 +140,13 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       { text: [{ text: 'Miejsce wystawienia: ', bold: true }, { text: place }] },
       { text: [{ text: 'Termin płatności: ', bold: true }, { text: paymentDue }] },
       { text: [{ text: 'Płatność: ', bold: true }, { text: 'przelew' }] },
-      horizontalLine(),
+      horizontalSpacer(),
       { table, layout: noBorderLayout },
       { table: buildItemsTable(invoiceSummary) },
       { table: buildSummaryTable(invoiceSummary.summary), layout: noBorderLayout },
-      horizontalLine(),
+      horizontalSpacer(),
       { text: [{ text: 'Do zapłaty ', bold: true }, { text: `${invoiceSummary.summary.grossValue}` }] },
-      horizontalLine(),
+      horizontalSpacer(),
       { text: 'Imię i nazwisko wystawcy:', bold: true },
       { text: `${invoice.createdBy}` },
     ],
