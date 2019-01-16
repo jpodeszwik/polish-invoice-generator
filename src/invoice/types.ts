@@ -20,6 +20,7 @@ export interface Invoice {
   date: string;
   place: string;
   paymentDue: string;
+  saleDate: string;
   issuer: Issuer;
   receiver: Institution;
   items: InvoiceItem[];
