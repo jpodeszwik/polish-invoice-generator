@@ -145,7 +145,7 @@ const buildCreatedBySection = (createdBy: string): Content => {
 };
 
 const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
-  const { invoiceNumber, date, place, paymentDue, issuer, receiver, items } = invoice;
+  const { invoiceNumber, date, place, paymentDue, issuer, receiver, items, saleDate, createdBy } = invoice;
   const invoiceSummary = calculateInvoiceSummary(items);
 
   const table: Table = {
@@ -164,6 +164,7 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       { text: [{ text: 'Faktura numer ', bold: true }, { text: invoiceNumber }] },
       { text: [{ text: 'Data wystawienia: ', bold: true }, { text: date }] },
       { text: [{ text: 'Miejsce wystawienia: ', bold: true }, { text: place }] },
+      { text: [{ text: 'Data sprzedaży: ', bold: true }, { text: saleDate }] },
       { text: [{ text: 'Termin płatności: ', bold: true }, { text: paymentDue }] },
       { text: [{ text: 'Płatność: ', bold: true }, { text: 'przelew' }] },
       horizontalSpacer(),
@@ -175,7 +176,7 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       horizontalSpacer(),
       buildPaymentSection(invoiceSummary.summary.grossValue),
       horizontalSpacer(),
-      buildCreatedBySection(invoice.createdBy),
+      buildCreatedBySection(createdBy),
     ],
     defaultStyle: {
       fontSize: 8,
