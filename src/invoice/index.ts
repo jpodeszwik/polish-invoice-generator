@@ -4,6 +4,7 @@ import { Content, Table, TableCell, TableLayoutFunctions, TDocumentDefinitions }
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { calculateInvoiceSummary, InvoiceSummary, InvoiceValue } from './invoiceCalculator';
 import { Invoice } from './types';
+import { formatMoney } from 'accounting';
 
 const pdf = pdfMake;
 pdf.vfs = pdfFonts.pdfMake.vfs;
@@ -15,7 +16,10 @@ const noBorderLayout: TableLayoutFunctions = {
 
 const emptyCell: TableCell = { text: '', border: [false, false, false, false] };
 
-const formatCurrency = (amount: Big) => amount.round(2, RoundingMode.RoundHalfUp).toFixed(2);
+const formatCurrency = (amount: Big) => {
+  const money = amount.round(2, RoundingMode.RoundHalfUp).toFixed(2);
+  return formatMoney(money, '', 2, ' ', ',');
+};
 const formatPLN = (num: Big) => `${formatCurrency(num)} PLN`;
 
 const horizontalSpacer = (): Content => {
@@ -128,7 +132,7 @@ const buildPaymentSection = (value: Big): Content => {
     layout: noBorderLayout,
     table: {
       body,
-      widths: ['10%', 'auto']
+      widths: ['10%', 'auto'],
     },
   };
 };
