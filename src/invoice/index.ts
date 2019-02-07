@@ -153,7 +153,7 @@ const buildDocumentDefinition = (invoice: Invoice): TDocumentDefinitions => {
       [{ text: 'Sprzedawca', bold: true }, { text: 'Nabywca', bold: true }],
       [{ text: issuer.name }, { text: receiver.name }],
       [{ text: issuer.address.join('\n') }, { text: receiver.address.join('\n') }],
-      [{ text: `NIP ${issuer.nip}` }, { text: `NIP: ${receiver.nip}` }],
+      [{ text: `NIP ${issuer.nip}` }, { text: `NIP ${receiver.nip}` }],
       [{ text: issuer.account.join('\n') }, {}],
     ],
     widths: ['50%', '50%'],
